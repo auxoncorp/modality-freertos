@@ -112,14 +112,22 @@ uint32_t prvTraceSwitchedTCB(void* pNewTCB);
 #define TRACE_DEBUG_PRINTF(x) MPT_NOOP_STATEMENT
 #endif
 
+#define TRACE_IO_TASK_NAME ""
+
 #define vTraceEnable(x) MPT_NOOP_STATEMENT
 #define vTraceStop(x) MPT_NOOP_STATEMENT
 #define xTraceIsEnabled() (0)
 #define pcTraceGetError() (NULL)
 #define vTraceExcludeTask(x) MPT_NOOP_STATEMENT
 #define vTraceProbeIterator(x) MPT_NOOP_STATEMENT
-#define xTraceGetControlPlaneBuffer() (NULL)
+#define pvTraceGetControlPlaneBuffer() (NULL)
 #define vTraceProcessControlPlaneMessages() MPT_NOOP_STATEMENT
+
+#define TRACE_GET_CURRENT_TASK() (NULL)
+#define TRACE_GET_TASK_PROBE_ID(pxTCB) (0)
+#define TRACE_GET_TASK_FILTER(pxTCB) (0)
+#define TRACE_SET_TASK_FILTER(pxTCB, filter) MPT_NOOP_STATEMENT
+#define TRACE_GET_FILTER_MASK() (0)
 
 #endif /* MPT_TRACING_ENABLED == 1 */
 

@@ -612,7 +612,7 @@ static int is_task_excluded(uint16_t probe_id)
     return is_excluded;
 }
 
-// CRC-16/IBM-3740
+/* CRC-16/IBM-3740 */
 static uint16_t probe_id_hash(const char* task_name, uint8_t length)
 {
     unsigned char x;
@@ -639,7 +639,6 @@ static portTASK_FUNCTION(prvModalityProbeIo, pvParameters)
     int32_t status;
     int32_t num_bytes;
     uint32_t target_probe_id;
-    int i;
     uint16_t iters = 0;
 
     while(1)
@@ -666,6 +665,7 @@ static portTASK_FUNCTION(prvModalityProbeIo, pvParameters)
             else
             {
 #if defined(MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER) && (MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER == 1)
+                int i;
                 for(i = 0; i < MPT_CFG_MAX_PROBES; i += 1)
                 {
                     if((g_tcb_probes[i].tcb != NULL) && (g_tcb_probes[i].control_msg_buffer != NULL))

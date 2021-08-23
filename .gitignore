@@ -1,2 +1,6 @@
 test/build
 test/FreeRTOS-Kernel
+
+examples/m3-qemu/FreeRTOS
+examples/m3-qemu/build
+examples/m3-qemu/.gdb_history

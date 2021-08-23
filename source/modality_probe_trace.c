@@ -49,7 +49,7 @@ static size_t g_next_storage_index = 0;
 
 #if defined(MPT_CFG_INCLUDE_IO_TASK) && (MPT_CFG_INCLUDE_IO_TASK == 1)
 #if defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1)
-static StackType_t g_io_task_stack[MPT_CFG_IO_TASK_STACK_SIZE];
+static StackType_t g_io_task_stack[MPT_CFG_IO_TASK_STACK_SIZE] = { 0 };
 static StaticTask_t g_io_task_tcb;
 #endif /* defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1) */
 const char TRACE_IO_TASK_NAME[] = MPT_CFG_IO_TASK_NAME;

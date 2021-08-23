@@ -27,6 +27,12 @@ typedef void (*TraceProbeIteratorFunction_t)(modality_probe* probe);
 
 #if (MPT_TRACING_ENABLED == 1)
 
+#if defined(MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG) && (MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG == 1)
+#if !defined(configUSE_APPLICATION_TASK_TAG) || (configUSE_APPLICATION_TASK_TAG == 0)
+#error "When using MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG, add configUSE_APPLICATION_TASK_TAG = 1 in FreeRTOSConfig.h"
+#endif /* !defined(configUSE_APPLICATION_TASK_TAG) || (configUSE_APPLICATION_TASK_TAG == 0) */
+#endif /* defined(MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG) && (MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG == 1) */
+
 #if defined(MPT_CFG_INCLUDE_IO_TASK) && (MPT_CFG_INCLUDE_IO_TASK == 1)
 #include "modality_probe_io.h"
 

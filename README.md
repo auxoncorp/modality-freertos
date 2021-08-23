@@ -43,6 +43,29 @@
   }
   ```
 
+## Examples
+
+The examples assume the Modality tar package has been installed in `/usr/local/modality`,
+see the CMake option `MODALITY_PROBE_ROOT`.
+
+### m3-qemu
+
+This is the `CORTEX_M3_MPS2_QEMU_GCC` example with networking from `FreeRTOS_Plus_TCP_Echo_Qemu_mps2` added for trace IO.
+
+```bash
+cd examples/m3-qemu
+
+mkdir build
+
+cd build
+
+cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
+
+make
+
+make simulate
+```
+
 ## Configuration File
 
 Applications must provide a `modality_probe_config.h` header file - in which the parameters described
@@ -145,8 +168,8 @@ extern "C" {
     * ARM Cortex-M port, using the CMSIS API
       ```c
       #define MPT_CFG_ALLOC_CRITICAL_SECTION() uint32_t __irq_status;
-      #define MPT_CFG_ENTER_CRITICAL_SECTION() portENTER_CRITICAL() {__irq_status = __get_PRIMASK(); __set_PRIMASK(1);} /* Disable all interrupts */
-      #define MPT_CFG_EXIT_CRITICAL_SECTION() portEXIT_CRITICAL() {__set_PRIMASK(__irq_status);}
+      #define MPT_CFG_ENTER_CRITICAL_SECTION() {__irq_status = __get_PRIMASK(); __set_PRIMASK(1);} /* Disable all interrupts */
+      #define MPT_CFG_EXIT_CRITICAL_SECTION() {__set_PRIMASK(__irq_status);}
       ```
   - `TRACE_MALLOC` and `TRACE_FREE`
 

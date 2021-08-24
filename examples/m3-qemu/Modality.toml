@@ -1,0 +1,7 @@
+modalityd = "http://localhost:14181/v1/"
+collector_connections = [
+    "udp://192.0.2.2:2718",
+]
+control_connections = [
+    "udp://192.0.2.80:34320",
+]

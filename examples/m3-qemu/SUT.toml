@@ -1,0 +1,5 @@
+name = "m3-qemu"
+tags = ["FreeRTOS"]
+component_paths = [
+    "./modality-component",
+]

@@ -88,11 +88,13 @@ const uint8_t ucMACAddress[ 6 ] = {
 };
 
 static UBaseType_t ulNextRand;
-static BaseType_t xTasksAlreadyCreated = pdFALSE;
+static BaseType_t xTraceIoInitialized = pdFALSE;
 
 int main( void )
 {
     vTraceEnable(0);
+    /* vTraceExcludeTask("IDLE"); */
+    /* vTraceExcludeTask("IP-task"); */
 
     prvMiscInitialisation();
 
@@ -192,13 +194,15 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     /* If the network has just come up...*/
     if( eNetworkEvent == eNetworkUp )
     {
-        /* Create the tasks that use the IP stack if they have not already been
-         * created. */
-        if( xTasksAlreadyCreated == pdFALSE )
+        if( xTraceIoInitialized == pdFALSE )
         {
-            /* TODO TODO TODO */
-
-            xTasksAlreadyCreated = pdTRUE;
+            uint32_t collector_addr = FreeRTOS_inet_addr_quick(
+                    configCOLLECTOR_SERVER_ADDR0,
+                    configCOLLECTOR_SERVER_ADDR1,
+                    configCOLLECTOR_SERVER_ADDR2,
+                    configCOLLECTOR_SERVER_ADDR3);
+            FreeRTOS_OutputARPRequest(collector_addr);
+            xTraceIoInitialized = pdTRUE;
         }
 
         /* Print out the network configuration, which may have come from a DHCP
@@ -218,7 +222,7 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     }
     else
     {
-        FreeRTOS_printf( ("Application idle hook network down\n") );
+        FreeRTOS_printf( ("Network down\n") );
     }
 }
 /*-----------------------------------------------------------*/

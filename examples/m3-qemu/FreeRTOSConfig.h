@@ -96,7 +96,6 @@ extern void vAssertCalled( void );
 /* networking definitions */
 #define configMAC_ISR_SIMULATOR_PRIORITY     ( configMAX_PRIORITIES - 2 )
 #define ipconfigUSE_NETWORK_EVENT_HOOK 1
-//#define ipconfigSOCK_DEFAULT_RECEIVE_BLOCK_TIME  pdMS_TO_TICKS(5000)
 #define configNETWORK_INTERFACE_TO_USE 1L
 
 /* Default MAC address configuration.  The demo creates a virtual network
@@ -111,34 +110,41 @@ configure the real network connection to use. */
 #define configMAC_ADDR4    0x34
 #define configMAC_ADDR5    0xAD
 
-/* Default IP address configuration.  Used in ipconfigUSE_DNS is set to 0, or
-ipconfigUSE_DNS is set to 1 but a DNS server cannot be contacted. */
+/* Default IP address configuration, 192.0.2.80. */
 #define configIP_ADDR0      192
-#define configIP_ADDR1      168
-#define configIP_ADDR2      122
+#define configIP_ADDR1      0
+#define configIP_ADDR2      2
 #define configIP_ADDR3      80
 
-/* Default gateway IP address configuration.  Used in ipconfigUSE_DNS is set to
-0, or ipconfigUSE_DNS is set to 1 but a DNS server cannot be contacted. */
+/* Default gateway IP address configuration, 192.0.2.254. */
 #define configGATEWAY_ADDR0 192
-#define configGATEWAY_ADDR1 168
-#define configGATEWAY_ADDR2 122
+#define configGATEWAY_ADDR1 0
+#define configGATEWAY_ADDR2 2
 #define configGATEWAY_ADDR3 254
 
-/* Default netmask configuration.  Used in ipconfigUSE_DNS is set to 0, or
-ipconfigUSE_DNS is set to 1 but a DNS server cannot be contacted. */
+/* Default netmask configuration. */
 #define configNET_MASK0     255
 #define configNET_MASK1     255
 #define configNET_MASK2     255
 #define configNET_MASK3     0
 
-/* Default DNS server configuration.  OpenDNS addresses are 208.67.222.222 and
-208.67.220.220.  Used in ipconfigUSE_DNS is set to 0, or ipconfigUSE_DNS is set
-to 1 but a DNS server cannot be contacted.*/
+/* Default DNS server configuration, 192.0.2.254. */
 #define configDNS_SERVER_ADDR0  192
-#define configDNS_SERVER_ADDR1  168
-#define configDNS_SERVER_ADDR2  122
+#define configDNS_SERVER_ADDR1  0
+#define configDNS_SERVER_ADDR2  2
 #define configDNS_SERVER_ADDR3  254
+
+/* IP address of the Modality UDP collector, 192.0.2.2 */
+#define configCOLLECTOR_SERVER_ADDR0 192
+#define configCOLLECTOR_SERVER_ADDR1 0
+#define configCOLLECTOR_SERVER_ADDR2 2
+#define configCOLLECTOR_SERVER_ADDR3 2
+
+/* The UDP port to which Modality reports are sent. */
+#define configCOLLECTOR_PORT ( 2718 )
+
+/* The UDP port to which Modality control messages are received on. */
+#define configCONTROL_PLANE_PORT ( 34320 )
 
 extern void vLoggingPrintf( const char * pcFormatString, ... );
 

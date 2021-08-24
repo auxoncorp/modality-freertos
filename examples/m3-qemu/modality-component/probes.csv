@@ -1,0 +1,7 @@
+component_id,id,name,description,tags,file,line
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,64172,IP-task,,FreeRTOS,,
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,35405,Rx,,FreeRTOS,,
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,1161,TX,,FreeRTOS,,
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,34950,IDLE,,FreeRTOS,,
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,23595,Tmr Svc,,FreeRTOS,,
+ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,20415,EMAC,,FreeRTOS,,

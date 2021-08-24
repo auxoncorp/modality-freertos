@@ -241,10 +241,10 @@ aborted. */
 #define ipconfigTCP_TIME_TO_LIVE        128 /* also defined in FreeRTOSIPConfigDefaults.h */
 
 /* USE_TCP: Use TCP and all its features */
-#define ipconfigUSE_TCP             ( 1 )
+#define ipconfigUSE_TCP             ( 0 )
 
 /* USE_WIN: Let TCP use windowing mechanism. */
-#define ipconfigUSE_TCP_WIN         ( 1 )
+#define ipconfigUSE_TCP_WIN         ( 0 )
 
 /* The MTU is the maximum number of bytes the payload of a network frame can
 contain.  For normal Ethernet V2 frames the maximum MTU is 1500.  Setting a

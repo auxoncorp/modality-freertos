@@ -118,6 +118,7 @@ add_executable(
     main_blinky.c
     startup.c
     syscall.c
+    modality_probe_io.c
     ${KERNEL_SOURCES}
     ${TCPIP_SOURCES}
     ${CMAKE_SOURCE_DIR}/../../source/modality_probe_trace.c)
@@ -174,7 +175,7 @@ add_custom_command(
     qemu-system-arm
     -machine mps2-an385 -cpu cortex-m3 -m 16M
     -monitor null -semihosting --semihosting-config enable=on,target=native -serial stdio
-    -netdev tap,id=net0,ifname=virbr0-nic,script=no
+    -netdev tap,id=net0,ifname=qemu-net,script=no
     -net nic,macaddr=52:54:00:12:34:AD,model=lan9118,netdev=net0
     -nographic
     -kernel m3-qemu

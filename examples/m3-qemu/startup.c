@@ -24,6 +24,8 @@
  *
  */
 
+#include "FreeRTOS.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -184,6 +186,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"))) =
 
 void _start(void)
 {
+    NVIC_SetPriority( ETHERNET_IRQn, configMAC_INTERRUPT_PRIORITY );
     uart_init();
     main();
     exit(0);

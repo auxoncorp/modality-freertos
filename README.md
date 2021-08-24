@@ -22,6 +22,7 @@
   ```c
   /* modality_probe_io.h */
 
+  /* Optional */
   #define TRACE_IO_INIT() my_trace_io_init()
 
   #define TRACE_IO_READ(_data, _size, _bytes_read) my_trace_io_read(_data, _size, _bytes_read)
@@ -52,18 +53,42 @@ see the CMake option `MODALITY_PROBE_ROOT`.
 
 This is the `CORTEX_M3_MPS2_QEMU_GCC` example with networking from `FreeRTOS_Plus_TCP_Echo_Qemu_mps2` added for trace IO.
 
+```
+Host IP address (qemu-net):   192.0.2.2
+FreeRTOS IP address:          192.0.2.80
+FreeRTOS Subnet mask:         255.255.255.0
+FreeRTOS Mac address:         52:54:00:12:34:AD
+FreeRTOS control plane port:  34320
+Modality collector port:      2718
+Modality collector address:   192.0.2.2
+```
+
 ```bash
+# In terminal #1
+# Temporarily adds qemu-net interface, with IP address 192.0.2.2
+sudo ./setup-networking.sh
+```
+
+```bash
+# In terminal #2
 cd examples/m3-qemu
 
+# Create the 'm3-qemu' SUT and open a session named 'qemu'
+modality sut create .
+modality sut use m3-qemu
+modality session open qemu m3-qemu
+modality session use qemu
+
 mkdir build
-
 cd build
-
 cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
-
 make
 
+# Press CTRL+C to quit
 make simulate
+
+# View the trace log
+modality log
 ```
 
 ## Configuration File
@@ -108,6 +133,8 @@ extern "C" {
 #define MPT_CFG_IO_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
 
 #define MPT_CFG_IO_TASK_DELAY 10
+
+#define MPT_CFG_IO_TASK_STARTUP_DELAY (1000 / portTICK_PERIOD_MS)
 
 #define MPT_CFG_IO_TASK_ITERS_PER_MUTATOR_ANNOUNCEMENT 200
 
@@ -270,6 +297,10 @@ extern "C" {
   - `MPT_CFG_IO_TASK_DELAY`
 
     The number of ticks used to `vTaskDelay()` in the IO task loop.
+    Used when `MPT_CFG_INCLUDE_IO_TASK == 1`.
+  - `MPT_CFG_IO_TASK_STARTUP_DELAY`
+
+    When defined, the number of ticks used to `vTaskDelay()` in the IO task loop before it begins its loop.
     Used when `MPT_CFG_INCLUDE_IO_TASK == 1`.
   - `MPT_CFG_IO_TASK_ITERS_PER_MUTATOR_ANNOUNCEMENT`
 

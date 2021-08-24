@@ -11,7 +11,9 @@ extern "C" {
     #define TRACE_DEBUG_PRINTF(x) vLoggingPrintf x
 #endif
 
-#define MPT_CFG_TASK_PROBE_SIZE 1024
+/* Since we're running in a QEMU environment, use large buffers to ensure we can tolerate
+ * slow hosts and/or network bring up delays */
+#define MPT_CFG_TASK_PROBE_SIZE (1024 * 8)
 
 #define MPT_CFG_MAX_PROBES 8
 
@@ -23,7 +25,6 @@ extern "C" {
 
 #define MPT_CFG_INCLUDE_USER_LEVEL_PROBE_MACROS 1
 
-/*
 #define MPT_CFG_INCLUDE_IO_TASK 1
 
 #define MPT_CFG_IO_TASK_NAME "ModalityProbeIo"
@@ -34,15 +35,16 @@ extern "C" {
 
 #define MPT_CFG_IO_TASK_DELAY 10
 
+#define MPT_CFG_IO_TASK_STARTUP_DELAY 10
+
 #define MPT_CFG_IO_TASK_ITERS_PER_MUTATOR_ANNOUNCEMENT 200
 
-#define MPT_CFG_IO_TASK_BUFFER_SIZE 256
+#define MPT_CFG_IO_TASK_BUFFER_SIZE 512
 
-#define MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER 1
-
-#define MPT_CFG_CONTROL_PLANE_BUFFER_SIZE 512
-#define MPT_CFG_CONTROL_PLANE_TASK_BUFFER_SIZE 128
-*/
+/* No control plane buffers */
+//#define MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER 1
+//#define MPT_CFG_CONTROL_PLANE_BUFFER_SIZE 512
+//#define MPT_CFG_CONTROL_PLANE_TASK_BUFFER_SIZE 128
 
 #include "cmsis_gcc.h"
 #define MPT_CFG_ALLOC_CRITICAL_SECTION() uint32_t __irq_status;

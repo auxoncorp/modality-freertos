@@ -265,7 +265,7 @@ void prvTraceError(const char* msg)
     if(g_error_msg == NULL)
     {
         g_error_msg = msg;
-        TRACE_DEBUG_PRINTF(("%s\n", msg));
+        TRACE_DEBUG_PRINTF(("TRACE ERROR: %s\n", msg));
     }
 }
 
@@ -640,6 +640,10 @@ static portTASK_FUNCTION(prvModalityProbeIo, pvParameters)
     int32_t num_bytes;
     uint32_t target_probe_id;
     uint16_t iters = 0;
+
+#ifdef MPT_CFG_IO_TASK_STARTUP_DELAY
+    vTaskDelay(MPT_CFG_IO_TASK_STARTUP_DELAY);
+#endif /* MPT_CFG_IO_TASK_STARTUP_DELAY */
 
     while(1)
     {

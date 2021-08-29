@@ -8,7 +8,7 @@
 
   SOURCE_FILES    += /path/to/modality-freertos/source/modality_probe_trace.c
 
-  LIBRARIES       += -lmodality_probe
+  LIBRARIES       += libmodality_probe.a
   ```
 2. Update `FreeRTOSConfig.h`
   ```c
@@ -73,7 +73,7 @@ sudo ./setup-networking.sh
 # In terminal #2
 cd examples/m3-qemu
 
-# Create the 'm3-qemu' SUT and open a session named 'qemu'
+# Create the 'm3-qemu' SUT and open a session named 'qemu' (can run ./m3-qemu-sut-up.sh to do the following)
 modality sut create .
 modality sut use m3-qemu
 modality session open qemu m3-qemu
@@ -111,6 +111,8 @@ extern "C" {
     extern void vLoggingPrintf( const char *pcFormatString, ... );
     #define TRACE_DEBUG_PRINTF(x) vLoggingPrintf x
 #endif
+
+#define MPT_CFG_STATIC_ALLOCATION 0
 
 #define MPT_CFG_TASK_PROBE_SIZE 1024
 
@@ -200,8 +202,8 @@ extern "C" {
       ```
   - `TRACE_MALLOC` and `TRACE_FREE`
 
-    When `configSUPPORT_STATIC_ALLOCATION == 0`, tracing resources will be allocated from the heap.
-    Theses are defined by default to use the porting layer in `modality_probe_port.h`.
+    When `MPT_CFG_STATIC_ALLOCATION == 0`, tracing resources will be allocated from the heap.
+    These are defined by default to use the porting layer in `modality_probe_port.h`.
     ```c
     #ifndef TRACE_MALLOC
     #define TRACE_MALLOC(size) pvPortMalloc(size)
@@ -213,6 +215,11 @@ extern "C" {
     ```
 
 * Modality Probe and Trace Settings
+  - `MPT_CFG_STATIC_ALLOCATION`
+
+    When `MPT_CFG_STATIC_ALLOCATION = 0` Modality probe and tracing resources are allocated
+    statically.
+    Otherwise resources are allocated using `TRACE_MALLOC()`, and free'd using `TRACE_FREE()
   - `MPT_CFG_MAX_PROBES`
 
     The maximun number of Modality probes available to the system.
@@ -220,13 +227,13 @@ extern "C" {
   - `MPT_CFG_TASK_PROBE_SIZE`
 
     The size, in bytes, of each probe's log storage buffer.
-    When `configSUPPORT_STATIC_ALLOCATION == 1`, probe buffers are allocated from
+    When `MPT_CFG_STATIC_ALLOCATION == 1`, probe buffers are allocated from
     a single global byte array, see `MPT_CFG_STORAGE_SIZE`.
-    Otherwise buffers are allocated using `TRACE_MALLOC()`, and freed using `TRACE_FREE()`
+    Otherwise buffers are allocated using `TRACE_MALLOC()`, and free'd using `TRACE_FREE()`.
   - `MPT_CFG_STORAGE_SIZE`
 
     The size, in bytes, of the global probe log storage buffer.
-    Only used when `configSUPPORT_STATIC_ALLOCATION == 1`.
+    Only used when `MPT_CFG_STATIC_ALLOCATION == 1`.
   - `MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG`
 
     When `MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG == 1`, each task's probe pointer will be placed

@@ -42,16 +42,16 @@ static tcb_probe_s g_tcb_probes[MPT_CFG_MAX_PROBES] = { { NULL } };
 
 static uint16_t g_excluded_task_probe_ids[MPT_CFG_MAX_EXCLUDED_TASKS] = { 0 };
 
-#if defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1)
+#if defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1)
 static uint8_t g_probe_storage[MPT_CFG_STORAGE_SIZE];
 static size_t g_next_storage_index = 0;
-#endif /* defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1) */
+#endif /* defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1) */
 
 #if defined(MPT_CFG_INCLUDE_IO_TASK) && (MPT_CFG_INCLUDE_IO_TASK == 1)
-#if defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1)
+#if defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1)
 static StackType_t g_io_task_stack[MPT_CFG_IO_TASK_STACK_SIZE] = { 0 };
 static StaticTask_t g_io_task_tcb;
-#endif /* defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1) */
+#endif /* defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1) */
 const char TRACE_IO_TASK_NAME[] = MPT_CFG_IO_TASK_NAME;
 static TaskHandle_t g_io_task_handle = NULL;
 static uint8_t g_io_buffer[MPT_CFG_IO_TASK_BUFFER_SIZE] = { 0 };
@@ -98,7 +98,7 @@ void vTraceEnable(int startOption)
 
         TRACE_DEBUG_PRINTF(("Creating %s task\n", TRACE_IO_TASK_NAME));
 
-#if defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1)
+#if defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1)
         g_io_task_handle = xTaskCreateStatic(
                 prvModalityProbeIo,
                 TRACE_IO_TASK_NAME,
@@ -115,7 +115,7 @@ void vTraceEnable(int startOption)
                 NULL, /* pvParameters */
                 MPT_CFG_IO_TASK_PRIORITY,
                 &g_io_task_handle);
-#endif /* defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1) */
+#endif /* defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1) */
 
         if(g_io_task_handle == NULL)
         {
@@ -488,7 +488,7 @@ static uint8_t* alloc_storage(size_t size_bytes)
 {
     uint8_t* storage = NULL;
 
-#if defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1)
+#if defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1)
     if((g_next_storage_index + size_bytes) <= MPT_CFG_STORAGE_SIZE)
     {
         storage = &g_probe_storage[g_next_storage_index];
@@ -496,7 +496,7 @@ static uint8_t* alloc_storage(size_t size_bytes)
     }
 #else
     storage = (uint8_t*) TRACE_MALLOC(size_bytes);
-#endif /* defined(configSUPPORT_STATIC_ALLOCATION) && (configSUPPORT_STATIC_ALLOCATION == 1) */
+#endif /* defined(MPT_CFG_STATIC_ALLOCATION) && (MPT_CFG_STATIC_ALLOCATION == 1) */
 
     return storage;
 }

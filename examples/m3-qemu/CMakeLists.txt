@@ -43,7 +43,7 @@ set(
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/FreeRTOS")
     message(STATUS "Cloning FreeRTOS ${FREERTOS_TAG}")
     execute_process(
-        COMMAND git clone --depth 1 --recurse-submodules --branch "${FREERTOS_TAG}" https://github.com/FreeRTOS/FreeRTOS.git "${CMAKE_SOURCE_DIR}/FreeRTOS"
+        COMMAND git clone --depth 1 --recurse-submodules -j 4 --branch "${FREERTOS_TAG}" https://github.com/FreeRTOS/FreeRTOS.git "${CMAKE_SOURCE_DIR}/FreeRTOS"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE

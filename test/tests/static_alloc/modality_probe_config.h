@@ -11,6 +11,8 @@ extern "C" {
     #define TRACE_DEBUG_PRINTF(x) vLoggingPrintf x
 #endif
 
+#define MPT_CFG_STATIC_ALLOCATION 1
+
 #define MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG 1
 
 #define MPT_CFG_STORAGE_SIZE (MPT_CFG_TASK_PROBE_SIZE * MPT_CFG_MAX_PROBES)

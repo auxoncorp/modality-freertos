@@ -77,6 +77,7 @@ static int32_t init_recvr(void)
             FreeRTOS_debug_printf( ( "Created Modality trace IO receiver socket\n" ) );
 
             status = FreeRTOS_setsockopt(xReceiverSocket, 0, FREERTOS_SO_RCVTIMEO, &timeout, 0);
+            configASSERT(status == 0);
 
             status = FreeRTOS_bind(xReceiverSocket, &xReceiverAddress, sizeof(xReceiverAddress));
             configASSERT(status == 0);

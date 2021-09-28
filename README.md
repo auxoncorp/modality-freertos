@@ -7,8 +7,6 @@
   INCLUDE_DIRS    += -I/path/to/modality-freertos/source/include
 
   SOURCE_FILES    += /path/to/modality-freertos/source/modality_probe_trace.c
-
-  LIBRARIES       += libmodality_probe.a
   ```
 2. Update `FreeRTOSConfig.h`
   ```c
@@ -219,7 +217,7 @@ extern "C" {
 
     When `MPT_CFG_STATIC_ALLOCATION = 0` Modality probe and tracing resources are allocated
     statically.
-    Otherwise resources are allocated using `TRACE_MALLOC()`, and free'd using `TRACE_FREE()
+    Otherwise resources are allocated using `TRACE_MALLOC()`, and free'd using `TRACE_FREE()`
   - `MPT_CFG_MAX_PROBES`
 
     The maximun number of Modality probes available to the system.

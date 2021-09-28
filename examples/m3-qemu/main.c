@@ -35,6 +35,17 @@
 #include <stdio.h>
 #include <time.h>
 
+/* Generated application event definitions */
+#include "generated_component_definitions.h"
+
+#if !defined(MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG) || (MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG == 0)
+#error "This example requires MPT_CFG_PLACE_PROBE_IN_TCB_APP_TAG = 1 in modality_probe_config.h"
+#endif
+
+#if !defined(MPT_CFG_INCLUDE_USER_LEVEL_PROBE_MACROS) || (MPT_CFG_INCLUDE_USER_LEVEL_PROBE_MACROS == 0)
+#error "This example requires MPT_CFG_INCLUDE_USER_LEVEL_PROBE_MACROS = 1 in modality_probe_config.h"
+#endif
+
 /* Define a name that will be used for LLMNR and NBNS searches. */
 #define mainHOST_NAME                                 "m3-qmeu"
 #define mainDEVICE_NICK_NAME                          "m3-qmeu"
@@ -185,11 +196,15 @@ static void prvMiscInitialisation( void )
 
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 {
+    size_t err;
     uint32_t ulIPAddress;
     uint32_t ulNetMask;
     uint32_t ulGatewayAddress;
     uint32_t ulDNSServerAddress;
     char cBuffer[ 16 ];
+
+    modality_probe* probe = (modality_probe*) xTaskGetApplicationTaskTag(xTaskGetCurrentTaskHandle());
+    configASSERT(probe != NULL);
 
     /* If the network has just come up...*/
     if( eNetworkEvent == eNetworkUp )
@@ -219,10 +234,24 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 
         FreeRTOS_inet_ntoa( ulDNSServerAddress, cBuffer );
         FreeRTOS_printf( ( "DNS Server Address: %s\r\n\r\n\r\n", cBuffer ) );
+
+        err = MODALITY_PROBE_RECORD(
+                probe,
+                NETWORK_UP,
+                MODALITY_TAGS("app", "network"),
+                "Network up");
+        configASSERT(err == MODALITY_PROBE_ERROR_OK);
     }
     else
     {
         FreeRTOS_printf( ("Network down\n") );
+
+        err = MODALITY_PROBE_FAILURE(
+                probe,
+                NETWORK_DOWN,
+                MODALITY_TAGS("app", "network"),
+                "Network down");
+        configASSERT(err == MODALITY_PROBE_ERROR_OK);
     }
 }
 /*-----------------------------------------------------------*/

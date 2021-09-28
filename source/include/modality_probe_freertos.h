@@ -9,7 +9,15 @@ extern "C" {
 
 #define MPT_TRACING_ENABLED configUSE_TRACE_FACILITY
 
-/* Static tracing event IDs */
+/* 
+ * Tracing event IDs
+ *
+ * Naming convention is TRACE_EVENT_<CLASS>_<FUNCTION>.
+ * The manifest-gen script generates event entries named <CLASS>_<FUNCTION>, e.g.
+ * the event TRACE_EVENT_TASK_CREATE will be in the manifest as TASK_CREATE.
+ * A <class> tag will also be added to the event's metadata.
+ *
+ */
 #define TRACE_EVENT_ID_TOP (0xFFFF)
 #define TRACE_EVENT_TASK_CREATE (TRACE_EVENT_ID_TOP - 1)
 #define TRACE_EVENT_TASK_SWITCHED_IN (TRACE_EVENT_ID_TOP - 2)

@@ -20,7 +20,8 @@ extern "C" {
 #endif
 
 #ifndef MPT_CAT2
-#define MPT_CAT2(a, b) a##b
+#define MPT__CAT2(a, b) a##b
+#define MPT_CAT2(a, b) MPT__CAT2(a, b)
 #endif
 
 #ifndef TRACE_MALLOC

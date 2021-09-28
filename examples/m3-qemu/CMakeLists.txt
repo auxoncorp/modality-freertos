@@ -166,7 +166,26 @@ target_link_libraries(
     ${LIBC}
     ${LIBRDIMON})
 
-add_custom_target(simulate)
+modality_probe_generate_manifest(
+    TARGET m3-qemu
+    DEPENDS main.c main_blinky.c
+    COMPONENT_NAME "modality-component"
+    OUTPUT_PATH "modality-component"
+    EXCLUDES "build" "FreeRTOS" "CMSIS"
+    FILE_EXTENSIONS "c"
+    # Tracing events reserve the range 1..=0xFFFF, user events start after
+    EVENT_ID_OFFSET 65536
+    SOURCE_PATH ".")
+
+modality_probe_generate_header(
+    TARGET m3-qemu
+    OUTPUT_FILE "generated_component_definitions.h"
+    COMPONENT_PATH "modality-component")
+
+add_custom_target(
+    simulate
+    DEPENDS m3-qemu)
+
 add_custom_command(
     TARGET simulate
     POST_BUILD

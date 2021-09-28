@@ -1,7 +1,7 @@
 component_id,id,name,description,tags,file,line
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,64172,IP-task,,FreeRTOS,,
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,35405,Rx,,FreeRTOS,,
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,1161,TX,,FreeRTOS,,
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,34950,IDLE,,FreeRTOS,,
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,23595,Tmr Svc,,FreeRTOS,,
-ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970,20415,EMAC,,FreeRTOS,,
+c555a326-11b0-427f-879e-175788120410,64172,IP_TASK,FreeRTOS task 'IP-task',FreeRTOS;task,,
+c555a326-11b0-427f-879e-175788120410,35405,RX,FreeRTOS task 'Rx',FreeRTOS;task,,
+c555a326-11b0-427f-879e-175788120410,1161,TX,FreeRTOS task 'TX',FreeRTOS;task,,
+c555a326-11b0-427f-879e-175788120410,34950,IDLE,FreeRTOS task 'IDLE',FreeRTOS;task,,
+c555a326-11b0-427f-879e-175788120410,23595,TMR_SVC,FreeRTOS task 'Tmr Svc',FreeRTOS;task,,
+c555a326-11b0-427f-879e-175788120410,20415,EMAC,FreeRTOS task 'EMAC',FreeRTOS;task,,

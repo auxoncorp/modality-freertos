@@ -26,21 +26,32 @@
 
 #include <FreeRTOS.h>
 #include <task.h>
+#include <timers.h>
 #include <queue.h>
 #include <stdio.h>
 
+/* Generated application event definitions */
+#include "generated_component_definitions.h"
+
 static void prvQueueReceiveTask( void * pvParameters );
 static void prvQueueSendTask( void * pvParameters );
+static void prvQueueSendTimerCallback( TimerHandle_t xTimerHdl );
 
 #define mainQUEUE_RECEIVE_TASK_PRIORITY    ( tskIDLE_PRIORITY + 2 )
 #define mainQUEUE_SEND_TASK_PRIORITY       ( tskIDLE_PRIORITY + 1 )
 #define mainQUEUE_LENGTH                   ( 1 )
 #define mainQUEUE_SEND_FREQUENCY_MS        ( 200 / portTICK_PERIOD_MS )
+#define mainTIMER_SEND_FREQUENCY_MS        ( 200 / portTICK_PERIOD_MS )
+
 /* The queue used by both tasks. */
 static QueueHandle_t xQueue = NULL;
 
+static TimerHandle_t xTimer = NULL;
+
 void main_blinky( void )
 {
+    const TickType_t xTimerPeriod = mainTIMER_SEND_FREQUENCY_MS;
+
     /* Create the queue. */
     xQueue = xQueueCreate( mainQUEUE_LENGTH, sizeof( uint32_t ) );
 
@@ -61,6 +72,17 @@ void main_blinky( void )
                      NULL,
                      mainQUEUE_SEND_TASK_PRIORITY,
                      NULL );
+
+        xTimer = xTimerCreate( "Timer",
+                               xTimerPeriod,                /* The period of the software timer in ticks. */
+                               pdTRUE,                      /* xAutoReload is set to pdTRUE. */
+                               NULL,                        /* The timer's ID is not used. */
+                               prvQueueSendTimerCallback ); /* The function executed when the timer expires. */
+
+        if( xTimer != NULL )
+        {
+            xTimerStart( xTimer, 0 );
+        }
 
         /* Start the tasks and timer running. */
         vTaskStartScheduler();
@@ -100,15 +122,20 @@ static void prvQueueSendTask( void * pvParameters )
         xQueueSend( xQueue, &ulValueToSend, 0U );
     }
 }
+/*-----------------------------------------------------------*/
 
 volatile uint32_t ulRxEvents = 0;
 static void prvQueueReceiveTask( void * pvParameters )
 {
+    size_t err;
     uint32_t ulReceivedValue;
     const uint32_t ulExpectedValue = 100UL;
 
     /* Remove compiler warning about unused parameter. */
     ( void ) pvParameters;
+
+    modality_probe* probe = (modality_probe*) xTaskGetApplicationTaskTag(xTaskGetCurrentTaskHandle());
+    configASSERT(probe != NULL);
 
     for( ; ; )
     {
@@ -116,6 +143,15 @@ static void prvQueueReceiveTask( void * pvParameters )
          * indefinitely provided INCLUDE_vTaskSuspend is set to 1 in
          * FreeRTOSConfig.h. */
         xQueueReceive( xQueue, &ulReceivedValue, portMAX_DELAY );
+
+        err = MODALITY_PROBE_EXPECT(
+                probe,
+                RX_MSG,
+                (ulReceivedValue == ulExpectedValue),
+                MODALITY_SEVERITY(10),
+                MODALITY_TAGS("app", "ipc"),
+                "Received message");
+        configASSERT(err == MODALITY_PROBE_ERROR_OK);
 
         /*  To get here something must have been received from the queue, but
          * is it the expected value?  If it is, toggle the LED. */
@@ -125,7 +161,29 @@ static void prvQueueReceiveTask( void * pvParameters )
             vTaskDelay( 1000 );
             ulReceivedValue = 0U;
             ulRxEvents++;
+
+            err = MODALITY_PROBE_RECORD_W_U32(
+                    probe,
+                    BLINKING,
+                    ulRxEvents,
+                    MODALITY_TAGS("app", "ipc"),
+                    "Blinking");
+            configASSERT(err == MODALITY_PROBE_ERROR_OK);
         }
     }
+}
+/*-----------------------------------------------------------*/
+
+static void prvQueueSendTimerCallback( TimerHandle_t xTimerHdl )
+{
+    const uint32_t ulValueToSend = 1;
+
+    /* Avoid compiler warnings resulting from the unused parameter. */
+    ( void ) xTimerHdl;
+
+    /* Send to the queue - causing the queue receive task to unblock and
+     * write out a message.  This function is called from the timer/daemon task, so
+     * must not block.  Hence the block time is set to 0. */
+    xQueueSend( xQueue, &ulValueToSend, 0U );
 }
 /*-----------------------------------------------------------*/

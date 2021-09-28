@@ -1,5 +1,5 @@
 name = "modality-component"
-id = "ab0dc784-d4ed-4196-9e4d-9dc2ccdd6970"
-code_hash = "b5c79250188f536b7e87f631163ad6ebe8f6042f1bb8f92a9dd8bc0760edefd0"
-instrumentation_hash = "af5bb414ba21663e9ca31d0771bda97506e4c7ea755289c79640497c52ead483"
-tags = ["FreeRTOS"]
+id = "c555a326-11b0-427f-879e-175788120410"
+code_hash = "8f9f27e393c38b6c795b42048777ba9415cb293ead1d4c94251b8b6c5a037d8c"
+instrumentation_hash = "8a56e56709477e7ad436d0d4f91ef4fc7cc473e5cab0585024b45d1e4f9b3664"
+tags = []

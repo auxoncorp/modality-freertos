@@ -7,6 +7,8 @@ modality session delete $SESSION --force
 
 modality sut delete $SUT --force
 
+set -e
+
 modality sut create .
 
 modality sut use $SUT

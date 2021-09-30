@@ -89,6 +89,19 @@ make simulate
 modality log
 ```
 
+## Updating Modality Component Manifests
+
+Run the [tools/update-manifest.py](tools/update-manifest.py) script to
+add the FreeRTOS tracing event and task probe definitions to a Modality component.
+
+Probe IDs are generated from a hash of their associated task name.
+
+```bash
+./tools/update-manifest.py \
+    --component examples/m3-qemu/modality-component \
+    --task-names "IP-task" "Rx" "TX" "IDLE" "Tmr Svc" "EMAC"
+```
+
 ## Configuration File
 
 Applications must provide a `modality_probe_config.h` header file - in which the parameters described

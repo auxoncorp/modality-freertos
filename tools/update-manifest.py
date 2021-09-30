@@ -12,7 +12,15 @@ from pyclibrary import CParser
 from crccheck.crc import Crc16Ibm3740
 
 # Most of the events have u32 payloads, this is a list of events that don't
-EVENTS_WITHOUT_PAYLOADS = ['TASK_SWITCHED_OUT']
+EVENTS_WITHOUT_PAYLOADS = [
+    'TASK_SWITCHED_OUT',
+    'TRACE_EVENT_MUTEX_GIVE',
+    'TRACE_EVENT_MUTEX_GIVE_BLOCKED',
+    'TRACE_EVENT_MUTEX_GIVE_FAILED',
+    'TRACE_EVENT_MUTEX_TAKE',
+    'TRACE_EVENT_MUTEX_TAKE_BLOCKED',
+    'TRACE_EVENT_MUTEX_TAKE_FAILED',
+]
 
 def dir_path(string):
     if os.path.isdir(string):
@@ -26,10 +34,14 @@ def remove_prefix(text, prefix):
 def parse_freertos_trace_event_definitions(header_file_path):
     events = []
     parser = CParser([header_file_path])
+    ids = set()
     for item in parser.defs['values'].items():
         name = item[0]
         event_id = item[1]
         if name != 'TRACE_EVENT_ID_TOP' and name.startswith('TRACE_EVENT_'):
+            if event_id in ids:
+                sys.exit('Found duplicate event ID {} for event {}'.format(event_id, name))
+            ids.add(event_id)
             canonical_name = remove_prefix(name, 'TRACE_EVENT_').upper()
             event_class = canonical_name.split('_')[0].lower()
             desc = 'FreeRTOS {}'.format(canonical_name.replace('_', ' ').lower())
@@ -90,10 +102,14 @@ trace_events = parse_freertos_trace_event_definitions(trace_event_header_file)
 
 for trace_event in trace_events:
     event_rows = list(filter(lambda i: i['id'] != trace_event['id'], event_rows))
+    event_rows = list(filter(lambda i: i['name'] != trace_event['name'], event_rows))
 
     tags = 'FreeRTOS;' + trace_event['class']
     if trace_event['is_failure']:
         tags = 'FAILURE;{}'.format(tags)
+
+    if 'ISR' in trace_event['name']:
+        tags += ';ISR'
 
     type_hint = ''
     if trace_event['has_payload']:

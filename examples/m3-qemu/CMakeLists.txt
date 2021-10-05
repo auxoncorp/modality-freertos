@@ -161,7 +161,6 @@ target_link_options(
 target_link_libraries(
     m3-qemu
     PRIVATE
-    -Wl,--allow-multiple-definition
     ModalityProbe::LibModalityProbe
     ${LIBC}
     ${LIBRDIMON})

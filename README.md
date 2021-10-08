@@ -2,32 +2,34 @@
 
 ## Getting Started
 
-1. Update build script
+1. Install Modality (the examples assume the tarball was extracted to `/usr/local/modality`)
+2. Update build script
   ```make
   INCLUDE_DIRS    += -I/path/to/modality-freertos/source/include
 
   SOURCE_FILES    += /path/to/modality-freertos/source/modality_probe_trace.c
   ```
-2. Update `FreeRTOSConfig.h`
+3. Update `FreeRTOSConfig.h`
   ```c
   #define configUSE_TRACE_FACILITY 1
 
   /* Placed at the bottom, after all other configuration definitions */
   #include "modality_probe_trace.h"
   ```
-3. Create a `modality_probe_config.h` configuration file, see below for examples
-4. Define an IO interface
+4. Create a `modality_probe_config.h` configuration file, see below for examples
+5. Define an IO interface
   ```c
   /* modality_probe_io.h */
 
   /* Optional */
   #define TRACE_IO_INIT() my_trace_io_init()
 
+  /* Optional: required for control-plane data in */
   #define TRACE_IO_READ(_data, _size, _bytes_read) my_trace_io_read(_data, _size, _bytes_read)
 
   #define TRACE_IO_WRITE(_data, _size, _bytes_written) my_trace_io_write(_data, _size, _bytes_written)
 ```
-5. Initialize tracing before starting the scheduler
+6. Initialize tracing before starting the scheduler
   ```c
   int main(void)
   {

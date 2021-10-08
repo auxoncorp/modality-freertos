@@ -24,7 +24,7 @@ set(
     "Modality tar package installation directory")
 set(
     MODALITY_PROBE_TARGET_TRIPLE
-    "thumbv7em-none-eabi"
+    "thumbv7m-none-eabi"
     CACHE
     STRING
     "Target triple")

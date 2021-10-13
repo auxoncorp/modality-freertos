@@ -86,7 +86,40 @@ make
 
 # Press CTRL+C to quit
 make simulate
+```
 
+```text
+Creating ModalityProbeIo task
+0x20005580->prvMiscInitialisation 187: Seed for randomiser: 32
+0x20005580->prvMiscInitialisation 189: Random numbers: 0000094A 00003B00 00005631 000007FE
+0x20005580->main 112: FreeRTOS_IPInit
+Registering probe ID 64172 for task 'IP-task'
+Registering probe ID 35405 for task 'Rx'
+Registering probe ID 1161 for task 'TX'
+Registering probe ID 34950 for task 'IDLE'
+Registering probe ID 23595 for task 'Tmr Svc'
+0x2000f4e8->prvIPTask 402: prvIPTask started
+Registering probe ID 20415 for task 'EMAC'
+0x20005580->init_recvr 77: Created Modality trace IO receiver socket
+blinking
+blinking
+0x2000f4e8->vApplicationIPNetworkEventHook 227:
+
+IP Address: 192.0.2.80
+0x2000f4e8->vApplicationIPNetworkEventHook 230: Subnet Mask: 255.255.255.0
+0x2000f4e8->vApplicationIPNetworkEventHook 233: Gateway Address: 192.0.2.254
+0x2000f4e8->vApplicationIPNetworkEventHook 236: DNS Server Address: 192.0.2.254
+
+
+0x20005580->init_sender 41: Created Modality trace IO sender socket
+blinking
+blinking
+blinking
+blinking
+blinking
+```
+
+```bash
 # View the trace log
 modality log
 ```

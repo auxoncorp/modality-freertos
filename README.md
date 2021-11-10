@@ -44,12 +44,10 @@
   }
   ```
 
-## Examples
+## Example
 
-The examples assume the Modality tar package has been installed in `/usr/local/modality`,
+The example assume the Modality tar package has been installed in `/usr/local/modality`,
 see the CMake option `MODALITY_PROBE_ROOT`.
-
-### m3-qemu
 
 This is the `CORTEX_M3_MPS2_QEMU_GCC` example with networking from `FreeRTOS_Plus_TCP_Echo_Qemu_mps2` added for trace IO.
 
@@ -63,125 +61,132 @@ Modality collector port:      2718
 Modality collector address:   192.0.2.2
 ```
 
-```bash
-# In terminal #1
-# Temporarily adds qemu-net interface, with IP address 192.0.2.2
-sudo ./setup-networking.sh
-```
+1. Run the networking setup script in a separate terminal to proxy networking from qemu.
 
-```bash
-# In terminal #2
-cd examples/m3-qemu
+    ```bash
+    # Temporarily adds qemu-net interface, with IP address 192.0.2.2
+    cd examples/m3-qemu
+    sudo ./setup-networking.sh
+    ```
 
-# Create the 'm3-qemu' SUT and open a session named 'qemu' (can run ./m3-qemu-sut-up.sh to do the following)
-modality sut create .
-modality sut use m3-qemu
-modality session open qemu m3-qemu
-modality session use qemu
+2. Create the example SUT and open a [session](https://docs.auxon.io/modality/reference/glossary.html#session).
 
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
-make
+    ```bash
+    cd examples/m3-qemu
+    ./m3-qemu-sut-up.sh
+    ```
 
-# Press CTRL+C to quit
-make simulate
-```
+3. Build the modality-freertos example.
 
-```text
-Creating ModalityProbeIo task
-0x20005580->prvMiscInitialisation 187: Seed for randomiser: 32
-0x20005580->prvMiscInitialisation 189: Random numbers: 0000094A 00003B00 00005631 000007FE
-0x20005580->main 112: FreeRTOS_IPInit
-Registering probe ID 64172 for task 'IP-task'
-Registering probe ID 35405 for task 'Rx'
-Registering probe ID 1161 for task 'TX'
-Registering probe ID 34950 for task 'IDLE'
-Registering probe ID 23595 for task 'Tmr Svc'
-0x2000f4e8->prvIPTask 402: prvIPTask started
-Registering probe ID 20415 for task 'EMAC'
-0x20005580->init_recvr 77: Created Modality trace IO receiver socket
-blinking
-blinking
-0x2000f4e8->vApplicationIPNetworkEventHook 227:
+    ```bash
+    mkdir build
+    cd build
+    cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ..
+    make
+    ```
 
-IP Address: 192.0.2.80
-0x2000f4e8->vApplicationIPNetworkEventHook 230: Subnet Mask: 255.255.255.0
-0x2000f4e8->vApplicationIPNetworkEventHook 233: Gateway Address: 192.0.2.254
-0x2000f4e8->vApplicationIPNetworkEventHook 236: DNS Server Address: 192.0.2.254
+4. Run the example.
+
+    ```bash
+    # Press CTRL+C to quit
+    make simulate
+    ```
+
+    ```text
+    Creating ModalityProbeIo task
+    0x20005580->prvMiscInitialisation 187: Seed for randomiser: 32
+    0x20005580->prvMiscInitialisation 189: Random numbers: 0000094A 00003B00 00005631 000007FE
+    0x20005580->main 112: FreeRTOS_IPInit
+    Registering probe ID 64172 for task 'IP-task'
+    Registering probe ID 35405 for task 'Rx'
+    Registering probe ID 1161 for task 'TX'
+    Registering probe ID 34950 for task 'IDLE'
+    Registering probe ID 23595 for task 'Tmr Svc'
+    0x2000f4e8->prvIPTask 402: prvIPTask started
+    Registering probe ID 20415 for task 'EMAC'
+    0x20005580->init_recvr 77: Created Modality trace IO receiver socket
+    blinking
+    blinking
+    0x2000f4e8->vApplicationIPNetworkEventHook 227:
+
+    IP Address: 192.0.2.80
+    0x2000f4e8->vApplicationIPNetworkEventHook 230: Subnet Mask: 255.255.255.0
+    0x2000f4e8->vApplicationIPNetworkEventHook 233: Gateway Address: 192.0.2.254
+    0x2000f4e8->vApplicationIPNetworkEventHook 236: DNS Server Address: 192.0.2.254
 
 
-0x20005580->init_sender 41: Created Modality trace IO sender socket
-blinking
-blinking
-blinking
-blinking
-blinking
-```
+    0x20005580->init_sender 41: Created Modality trace IO sender socket
+    blinking
+    blinking
+    blinking
+    blinking
+    blinking
+    ```
 
-View the trace log:
-```bash
-modality log
-```
+5. View the trace log.
 
-```text
-║  *  ║  ║  ║  ║  ║  (1161:1:0:1, TASK_CREATE @ TX, payload=1)
-║  ║  ║  ║  ║  ║  ║
-║  ║  *  ║  ║  ║  ║  (20415:1:0:1, TASK_CREATE @ EMAC, payload=7)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:1:0:1, TASK_CREATE @ TMR_SVC, payload=9)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  *  ║  ║  (34950:1:0:1, TASK_CREATE @ IDLE, payload=0)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  *  ║  (35405:1:0:1, TASK_CREATE @ RX, payload=2)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:1:0:1, TASK_CREATE @ IP_TASK, payload=8)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:1:0:2, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:1:0:3, TASK_SWITCHED_OUT @ TMR_SVC)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:2:0:1, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:2:0:2, QUEUE_RECEIVE @ TMR_SVC, payload=1)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:2:0:3, QUEUE_RECEIVE_FAILED @ TMR_SVC, outcome=FAIL)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:2:0:4, TASK_DELAY_UNTIL @ TMR_SVC, payload=200)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  *  ║  ║  ║  (23595:2:0:5, TASK_SWITCHED_OUT @ TMR_SVC)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ╚═══════»╗  TMR_SVC interacted with IP_TASK
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:2:0:3, TASK_SWITCHED_IN @ IP_TASK, payload=8)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:2:0:4, QUEUE_SEND @ IP_TASK, payload=0)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:2:0:5, QUEUE_RECEIVE @ IP_TASK, payload=1)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:2:0:6, TASK_DELAY @ IP_TASK, payload=1)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ║  *  (64172:2:0:7, TASK_SWITCHED_OUT @ IP_TASK)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ╔«══════════╝  IP_TASK interacted with EMAC
-║  ║  ║  ║  ║  ║  ║
-║  ║  *  ║  ║  ║  ║  (20415:2:0:3, TASK_SWITCHED_IN @ EMAC, payload=7)
-║  ║  ║  ║  ║  ║  ║
-║  ║  *  ║  ║  ║  ║  (20415:2:0:4, TASK_SWITCHED_OUT @ EMAC)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ╚═══════»╗  ║  EMAC interacted with RX
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  *  ║  (35405:2:0:3, TASK_SWITCHED_IN @ RX, payload=2)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  *  ║  (35405:2:0:4, QUEUE_RECEIVE_BLOCKED @ RX, payload=0)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  *  ║  (35405:2:0:5, TASK_SWITCHED_OUT @ RX)
-║  ║  ║  ║  ║  ║  ║
-║  ║  ║  ║  ║  ╚═»╗  RX interacted with IP_TASK
-.  .  .  .  .  .  .
-.  .  .  .  .  .  .
-.  .  .  .  .  .  .
-```
+    ```bash
+    modality log
+    ```
+
+    ```text
+    ║  *  ║  ║  ║  ║  ║  (1161:1:0:1, TASK_CREATE @ TX, payload=1)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  *  ║  ║  ║  ║  (20415:1:0:1, TASK_CREATE @ EMAC, payload=7)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:1:0:1, TASK_CREATE @ TMR_SVC, payload=9)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  *  ║  ║  (34950:1:0:1, TASK_CREATE @ IDLE, payload=0)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  *  ║  (35405:1:0:1, TASK_CREATE @ RX, payload=2)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:1:0:1, TASK_CREATE @ IP_TASK, payload=8)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:1:0:2, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:1:0:3, TASK_SWITCHED_OUT @ TMR_SVC)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:2:0:1, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:2:0:2, QUEUE_RECEIVE @ TMR_SVC, payload=1)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:2:0:3, QUEUE_RECEIVE_FAILED @ TMR_SVC, outcome=FAIL)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:2:0:4, TASK_DELAY_UNTIL @ TMR_SVC, payload=200)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  *  ║  ║  ║  (23595:2:0:5, TASK_SWITCHED_OUT @ TMR_SVC)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ╚═══════»╗  TMR_SVC interacted with IP_TASK
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:2:0:3, TASK_SWITCHED_IN @ IP_TASK, payload=8)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:2:0:4, QUEUE_SEND @ IP_TASK, payload=0)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:2:0:5, QUEUE_RECEIVE @ IP_TASK, payload=1)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:2:0:6, TASK_DELAY @ IP_TASK, payload=1)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ║  *  (64172:2:0:7, TASK_SWITCHED_OUT @ IP_TASK)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ╔«══════════╝  IP_TASK interacted with EMAC
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  *  ║  ║  ║  ║  (20415:2:0:3, TASK_SWITCHED_IN @ EMAC, payload=7)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  *  ║  ║  ║  ║  (20415:2:0:4, TASK_SWITCHED_OUT @ EMAC)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ╚═══════»╗  ║  EMAC interacted with RX
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  *  ║  (35405:2:0:3, TASK_SWITCHED_IN @ RX, payload=2)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  *  ║  (35405:2:0:4, QUEUE_RECEIVE_BLOCKED @ RX, payload=0)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  *  ║  (35405:2:0:5, TASK_SWITCHED_OUT @ RX)
+    ║  ║  ║  ║  ║  ║  ║
+    ║  ║  ║  ║  ║  ╚═»╗  RX interacted with IP_TASK
+    .  .  .  .  .  .  .
+    .  .  .  .  .  .  .
+    .  .  .  .  .  .  .
+    ```
 
 ## Updating Modality Component Manifests
 

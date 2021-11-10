@@ -119,9 +119,68 @@ blinking
 blinking
 ```
 
+View the trace log:
 ```bash
-# View the trace log
 modality log
+```
+
+```text
+║  *  ║  ║  ║  ║  ║  (1161:1:0:1, TASK_CREATE @ TX, payload=1)
+║  ║  ║  ║  ║  ║  ║
+║  ║  *  ║  ║  ║  ║  (20415:1:0:1, TASK_CREATE @ EMAC, payload=7)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:1:0:1, TASK_CREATE @ TMR_SVC, payload=9)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  *  ║  ║  (34950:1:0:1, TASK_CREATE @ IDLE, payload=0)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  *  ║  (35405:1:0:1, TASK_CREATE @ RX, payload=2)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:1:0:1, TASK_CREATE @ IP_TASK, payload=8)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:1:0:2, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:1:0:3, TASK_SWITCHED_OUT @ TMR_SVC)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:2:0:1, TASK_SWITCHED_IN @ TMR_SVC, payload=9)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:2:0:2, QUEUE_RECEIVE @ TMR_SVC, payload=1)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:2:0:3, QUEUE_RECEIVE_FAILED @ TMR_SVC, outcome=FAIL)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:2:0:4, TASK_DELAY_UNTIL @ TMR_SVC, payload=200)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  *  ║  ║  ║  (23595:2:0:5, TASK_SWITCHED_OUT @ TMR_SVC)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ╚═══════»╗  TMR_SVC interacted with IP_TASK
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:2:0:3, TASK_SWITCHED_IN @ IP_TASK, payload=8)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:2:0:4, QUEUE_SEND @ IP_TASK, payload=0)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:2:0:5, QUEUE_RECEIVE @ IP_TASK, payload=1)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:2:0:6, TASK_DELAY @ IP_TASK, payload=1)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ║  *  (64172:2:0:7, TASK_SWITCHED_OUT @ IP_TASK)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ╔«══════════╝  IP_TASK interacted with EMAC
+║  ║  ║  ║  ║  ║  ║
+║  ║  *  ║  ║  ║  ║  (20415:2:0:3, TASK_SWITCHED_IN @ EMAC, payload=7)
+║  ║  ║  ║  ║  ║  ║
+║  ║  *  ║  ║  ║  ║  (20415:2:0:4, TASK_SWITCHED_OUT @ EMAC)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ╚═══════»╗  ║  EMAC interacted with RX
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  *  ║  (35405:2:0:3, TASK_SWITCHED_IN @ RX, payload=2)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  *  ║  (35405:2:0:4, QUEUE_RECEIVE_BLOCKED @ RX, payload=0)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  *  ║  (35405:2:0:5, TASK_SWITCHED_OUT @ RX)
+║  ║  ║  ║  ║  ║  ║
+║  ║  ║  ║  ║  ╚═»╗  RX interacted with IP_TASK
+.  .  .  .  .  .  .
+.  .  .  .  .  .  .
+.  .  .  .  .  .  .
 ```
 
 ## Updating Modality Component Manifests

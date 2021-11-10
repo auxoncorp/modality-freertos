@@ -8,6 +8,8 @@ import toml
 import pathlib
 import sys
 import argparse
+import json
+import subprocess
 from pyclibrary import CParser
 from crccheck.crc import Crc16Ibm3740
 
@@ -21,12 +23,6 @@ EVENTS_WITHOUT_PAYLOADS = [
     'TRACE_EVENT_MUTEX_TAKE_BLOCKED',
     'TRACE_EVENT_MUTEX_TAKE_FAILED',
 ]
-
-def dir_path(string):
-    if os.path.isdir(string):
-        return string
-    else:
-        raise NotADirectoryError(string)
 
 def remove_prefix(text, prefix):
     return text[text.startswith(prefix) and len(prefix):]
@@ -58,52 +54,30 @@ def parse_freertos_trace_event_definitions(header_file_path):
             events.append(event)
     return events
 
-def read_csv(path):
-    fieldnames = []
-    rows = []
-    with open(path, 'r', newline='') as f:
-        reader = csv.DictReader(f)
-        fieldnames = reader.fieldnames
-        for r in reader:
-            rows.append(r)
-    return fieldnames, rows
-
-def write_csv(path, fieldnames, rows):
-    with open(path, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames, lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
 def hash_task_name_to_probe_id(task_name):
     return Crc16Ibm3740.calc(str.encode(task_name))
 
 parser = argparse.ArgumentParser(description='Updates Modality component manifest files to include FreeRTOS events and probes.')
-parser.add_argument('-c', '--component', type=dir_path, required=True, help='Path to component directory')
+parser.add_argument('-c', '--component', type=str, required=True, help='Path to component directory')
+parser.add_argument('-n', '--component-name', type=str, required=False, default='modality-component',
+        help='Modality component name')
 parser.add_argument('-t', '--task-names', nargs='+', default=[], help='List of task names to add as probes')
 args = parser.parse_args()
 
 root_dir = pathlib.Path(__file__).parent.resolve().parent
 trace_event_header_file = root_dir.joinpath('source/include/modality_probe_freertos.h')
-component_dir = pathlib.Path(args.component)
-root_dir.joinpath('examples/m3-qemu/modality-component')
-component_file = component_dir.joinpath('Component.toml')
-events_file = component_dir.joinpath('events.csv')
-probes_file = component_dir.joinpath('probes.csv')
-
-for p in [trace_event_header_file, component_file, events_file, probes_file]:
-    if not p.exists():
-        sys.exit('Path \'{}\' doesn\'t exist'.format(p))
-
-component = toml.load(component_file)
-event_fieldnames, event_rows = read_csv(events_file)
-probe_fieldnames, probe_rows = read_csv(probes_file)
-
 trace_events = parse_freertos_trace_event_definitions(trace_event_header_file)
 
-for trace_event in trace_events:
-    event_rows = list(filter(lambda i: i['id'] != trace_event['id'], event_rows))
-    event_rows = list(filter(lambda i: i['name'] != trace_event['name'], event_rows))
+cli_args = [
+    'modality-probe',
+    'manifest-gen',
+    '--component-name',
+    '{}'.format(args.component_name),
+    '--output-path',
+    '{}'.format(args.component),
+]
 
+for trace_event in trace_events:
     tags = 'FreeRTOS;' + trace_event['class']
     if trace_event['is_failure']:
         tags = 'FAILURE;{}'.format(tags)
@@ -113,36 +87,29 @@ for trace_event in trace_events:
 
     type_hint = ''
     if trace_event['has_payload']:
-        type_hint = 'u32'
+        type_hint = 'U32'
 
-    event_rows.append({
-        'component_id': component['id'],
-        'id': trace_event['id'],
+    ext_event = {
+        'id': int(trace_event['id']),
         'name': trace_event['name'],
         'description': trace_event['desc'],
         'tags': tags,
         'type_hint': type_hint,
-        'file': '',
-        'line': '',
-    })
+    }
 
-write_csv(events_file, event_fieldnames, event_rows)
+    cli_args.append('--external-event')
+    cli_args.append('{}'.format(json.dumps(ext_event)))
 
 for task_name in args.task_names:
-    probe_id = str(hash_task_name_to_probe_id(task_name))
+    probe_id = int(hash_task_name_to_probe_id(task_name))
     canonical_name = task_name.replace(' ', '_').replace('-', '_').upper()
-    probe_rows = list(filter(lambda i: i['id'] != probe_id, probe_rows))
-    probe_rows.append({
-        'component_id': component['id'],
+    ext_probe = {
         'id': probe_id,
         'name': canonical_name,
         'description': "FreeRTOS task '{}'".format(task_name),
         'tags': 'FreeRTOS;task',
-        'file': '',
-        'line': '',
-    })
+    }
+    cli_args.append('--external-probe')
+    cli_args.append('{}'.format(json.dumps(ext_probe)))
 
-if len(args.task_names) > 0:
-    if probe_fieldnames is None:
-        probe_fieldnames = ['component_id', 'id', 'name', 'description', 'tags', 'file', 'line']
-    write_csv(probes_file, probe_fieldnames, probe_rows)
+subprocess.run(cli_args)

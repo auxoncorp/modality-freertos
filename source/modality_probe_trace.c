@@ -71,9 +71,8 @@ static tcb_probe_s* get_tcb_probe(void* task);
 static int is_task_excluded(uint16_t probe_id);
 static uint16_t probe_id_hash(const char* task_name, uint8_t length);
 
-void vTraceEnable(int startOption)
+void vTraceEnable(void)
 {
-    (void) startOption;
     TRACE_ALLOC_CRITICAL_SECTION();
 
     if(g_is_enabled != 0)
@@ -129,7 +128,7 @@ void vTraceEnable(int startOption)
     TRACE_EXIT_CRITICAL_SECTION();
 }
 
-void vTraceStop(void)
+void vTraceDisable(void)
 {
     g_is_enabled = 0;
 }
@@ -260,7 +259,7 @@ void vTraceProcessControlPlaneMessages(void)
 /* Private functions */
 void prvTraceError(const char* msg)
 {
-    vTraceStop();
+    vTraceDisable();
 
     if(g_error_msg == NULL)
     {

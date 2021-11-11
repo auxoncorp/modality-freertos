@@ -66,17 +66,44 @@ extern const char TRACE_IO_TASK_NAME[];
 #endif /* !defined(configSUPPORT_DYNAMIC_ALLOCATION) || (configSUPPORT_DYNAMIC_ALLOCATION == 0) */
 #endif /* defined(MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER) && (MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER == 1) */
 
-void vTraceEnable(int xUnused);
-void vTraceStop(void);
+/*
+ * Enable tracing.
+ */
+void vTraceEnable(void);
+
+/*
+ * Disable tracing.
+ */
+void vTraceDisable(void);
+
+/*
+ * Returns 0 is tracing is disabled, otherwise returns 1.
+ */
 int xTraceIsEnabled(void);
+
+/*
+ * Retrieve the error string pointer or NULL.
+ */
 const char* pcTraceGetError(void);
+
+/*
+ * Exclude a task by name from being traced.
+ * Must be called prior to creating the task.
+ */
 void vTraceExcludeTask(const char* pcName);
+
+/*
+ * Calls the iterator function for each probe in the global registry.
+ */
 void vTraceProbeIterator(TraceProbeIteratorFunction_t pvIteratorFunction);
 
 #if defined(MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER) && (MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER == 1)
 /* Returns the MessageBufferHandle_t associated with the current task, if any */
 void* pvTraceGetControlPlaneBuffer(void);
 
+/*
+ * Process a control plane message from the task's message queue, if one exists.
+ */
 void vTraceProcessControlPlaneMessages(void);
 #endif /* defined(MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER) && (MPT_CFG_INCLUDE_CONTROL_PLANE_BUFFER == 1) */
 
@@ -121,7 +148,7 @@ uint32_t prvTraceSwitchedTCB(void* pNewTCB);
 #define TRACE_IO_TASK_NAME ""
 
 #define vTraceEnable(x) MPT_NOOP_STATEMENT
-#define vTraceStop(x) MPT_NOOP_STATEMENT
+#define vTraceDisable(x) MPT_NOOP_STATEMENT
 #define xTraceIsEnabled() (0)
 #define pcTraceGetError() (NULL)
 #define vTraceExcludeTask(x) MPT_NOOP_STATEMENT

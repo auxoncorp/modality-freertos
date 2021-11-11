@@ -103,7 +103,7 @@ static BaseType_t xTraceIoInitialized = pdFALSE;
 
 int main( void )
 {
-    vTraceEnable(0);
+    vTraceEnable();
     /* vTraceExcludeTask("IDLE"); */
     /* vTraceExcludeTask("IP-task"); */
 

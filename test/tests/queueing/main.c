@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 {
     BaseType_t ret;
 
-    vTraceEnable(0);
+    vTraceEnable();
     ASSERT_TRACE_ERROR();
     assert(xTraceIsEnabled() == 1);
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     vTaskStartScheduler();
     ASSERT_TRACE_ERROR();
 
-    vTraceStop();
+    vTraceDisable();
     ASSERT_TRACE_ERROR();
     assert(xTraceIsEnabled() == 0);
 

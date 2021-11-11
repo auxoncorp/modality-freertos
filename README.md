@@ -33,7 +33,7 @@
   ```c
   int main(void)
   {
-      vTraceEnable(0);
+      vTraceEnable();
 
       /* Optionally filter out tasks from being traced */
       vTraceExcludeTask("IDLE");
@@ -291,7 +291,7 @@ extern "C" {
 
     Enable the internal tracing asserts by setting `MPT_CFG_USE_TRACE_ASSERT = 1`.
     It is recommened to have this enabled during development and integration for error checking.
-    When an assert is triggered, `vTraceStop()` is called and the error message can be retrieved by calling `pcTraceGetError()`.
+    When an assert is triggered, `vTraceDisable()` is called and the error message can be retrieved by calling `pcTraceGetError()`.
   - Tracing can be disabled globally by setting `configUSE_TRACE_FACILITY == 0` in `FreeRTOSConfig.h`.
 
 * Critical Section and Porting
